@@ -1,0 +1,218 @@
+{
+  "threshold": 2,
+  "emails": [
+    {
+      "id": 1,
+      "subject": "You have WON a FREE cruise!",
+      "text": "Congratulations! Click here to claim your FREE cruise. You WON!",
+      "expected_categories": [
+        "FREE",
+        "WIN_WON",
+        "CLICK_HERE"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Promotional spam"
+    },
+    {
+      "id": 2,
+      "subject": "Action needed on your mailbox",
+      "text": "URGENT: Please verify your account within 24 hours or it will be suspended.",
+      "expected_categories": [
+        "URGENT",
+        "VERIFY_ACCOUNT"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Urgent account threat"
+    },
+    {
+      "id": 3,
+      "subject": "Unusual sign-in activity",
+      "text": "Dear customer, we noticed unusual sign-in activity. To keep your mailbox active, verify your account today and click here to sign in.",
+      "expected_categories": [
+        "CLICK_HERE",
+        "VERIFY_ACCOUNT"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Account verification phishing"
+    },
+    {
+      "id": 4,
+      "subject": "FREE FREE FREE",
+      "text": "FREE FREE FREE! Win big, win now. Urgent offer: click here before midnight.",
+      "expected_categories": [
+        "FREE",
+        "WIN_WON",
+        "CLICK_HERE",
+        "URGENT"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Multiple patterns, repeated"
+    },
+    {
+      "id": 5,
+      "subject": "Lab schedule change",
+      "text": "Hi all, the DVP lab moves to Thursday 2pm in Room 204. Please bring your laptops.",
+      "expected_categories": [],
+      "expected_verdict": "SAFE",
+      "note": "Normal college email"
+    },
+    {
+      "id": 6,
+      "subject": "Project roadmap",
+      "text": "Meeting at 3pm tomorrow to discuss the project roadmap.",
+      "expected_categories": [],
+      "expected_verdict": "SAFE",
+      "note": "Normal work email"
+    },
+    {
+      "id": 7,
+      "subject": "Library seminar",
+      "text": "Hi Priya, the library has a free seminar on research writing on Friday at 4pm. See you there.",
+      "expected_categories": [
+        "FREE"
+      ],
+      "expected_verdict": "SAFE",
+      "note": "Legitimate email with one keyword"
+    },
+    {
+      "id": 8,
+      "subject": "Building and hackathon news",
+      "text": "We are renovating the window frames this winter. The team won the hackathon last week, wonderful news!",
+      "expected_categories": [
+        "WIN_WON"
+      ],
+      "expected_verdict": "SAFE",
+      "note": "Substrings inside longer words (window, winter, wonderful)"
+    },
+    {
+      "id": 9,
+      "subject": "ACCOUNT ALERT",
+      "text": "URGENT!!! VERIFY YOUR ACCOUNT NOW. CLICK HERE TO KEEP ACCESS.",
+      "expected_categories": [
+        "CLICK_HERE",
+        "URGENT",
+        "VERIFY_ACCOUNT"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "All uppercase"
+    },
+    {
+      "id": 10,
+      "subject": "Giveaway",
+      "text": "you could win a free laptop, click here and respond today.",
+      "expected_categories": [
+        "FREE",
+        "WIN_WON",
+        "CLICK_HERE"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "All lowercase"
+    },
+    {
+      "id": 11,
+      "subject": "College fest",
+      "text": "Free tickets, free snacks and free parking at the college fest. Bring friends.",
+      "expected_categories": [
+        "FREE"
+      ],
+      "expected_verdict": "SAFE",
+      "note": "Repeated occurrences of one category"
+    },
+    {
+      "id": 12,
+      "subject": "Promo code",
+      "text": "Promo code: freewinwon2026 - redeem today.",
+      "expected_categories": [
+        "FREE",
+        "WIN_WON"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Adjacent matches without separators"
+    },
+    {
+      "id": 13,
+      "subject": "IT Helpdesk reminder",
+      "text": "Our IT helpdesk will never ask you to verify your account by email. If you see such a message, report it.",
+      "expected_categories": [
+        "VERIFY_ACCOUNT"
+      ],
+      "expected_verdict": "SAFE",
+      "note": "Legitimate email quoting a phishing phrase"
+    },
+    {
+      "id": 14,
+      "subject": "Internal marks",
+      "text": "Dear students, internal assessment marks for the Theory of Computation course are uploaded on the portal. Contact the department office for corrections.",
+      "expected_categories": [],
+      "expected_verdict": "SAFE",
+      "note": "Normal college email"
+    },
+    {
+      "id": 15,
+      "subject": "Lottery notice",
+      "text": "Winner! You won the lottery. This is urgent: claim your prize within two days.",
+      "expected_categories": [
+        "WIN_WON",
+        "URGENT"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Prize scam"
+    },
+    {
+      "id": 16,
+      "subject": "Mixed case",
+      "text": "FrEe GiFt InSiDe. ClIcK hErE tO oPeN.",
+      "expected_categories": [
+        "FREE",
+        "CLICK_HERE"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Mixed upper and lower case"
+    },
+    {
+      "id": 17,
+      "subject": "Quarterly update",
+      "text": "Revenue grew steadily and the team won an industry award. Please review the attached slides before Monday.",
+      "expected_categories": [
+        "WIN_WON"
+      ],
+      "expected_verdict": "SAFE",
+      "note": "Legitimate email containing 'won'"
+    },
+    {
+      "id": 18,
+      "subject": "Timetable help",
+      "text": "To reset your timetable view, click here in the student portal settings.",
+      "expected_categories": [
+        "CLICK_HERE"
+      ],
+      "expected_verdict": "SAFE",
+      "note": "Legitimate email containing 'click here'"
+    },
+    {
+      "id": 19,
+      "subject": "Cafe offer",
+      "text": "Café Offer: FREE croissant with every order. Click here now — don't miss it!",
+      "expected_categories": [
+        "FREE",
+        "CLICK_HERE"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "Unicode characters (é, em dash)"
+    },
+    {
+      "id": 20,
+      "subject": "Final warning",
+      "text": "Dear user, URGENT action required. You have WON a free gift. To receive it, verify your account and click here. Do not ignore this message.",
+      "expected_categories": [
+        "FREE",
+        "WIN_WON",
+        "CLICK_HERE",
+        "URGENT",
+        "VERIFY_ACCOUNT"
+      ],
+      "expected_verdict": "SPAM DETECTED",
+      "note": "All five categories"
+    }
+  ]
+}

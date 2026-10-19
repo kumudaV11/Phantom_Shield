@@ -1,0 +1,14 @@
+Subject: You have WON a FREE iPhone
+From: promo@example.invalid
+
+Congratulations! You have WON a FREE iPhone. Click here now!
+---EMAIL---
+Subject: Project roadmap
+From: lead@example.invalid
+
+Meeting at 3pm tomorrow to discuss the project roadmap.
+---EMAIL---
+Subject: Account notice
+From: security@example.invalid
+
+URGENT: please verify your account today.

@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ============================ OVERVIEW ============================ -->
+<section class="page" id="page-overview" data-title="Overview" hidden>
+  <div class="hero">
+    <p class="eyebrow">Automata-based email analysis</p>
+    <h1>See Beyond the Inbox.</h1>
+    <p class="lead">Explore email threats through automata-based pattern detection, interactive state transitions, and deterministic performance analysis.</p>
+    <div class="row">
+      <a class="btn primary" href="#scanner">Analyze an Email</a>
+      <a class="btn" href="#nfa">Explore Automata</a>
+    </div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat"><span class="stat-label">Emails scanned (session)</span><strong id="ov-total">0</strong></div>
+    <div class="stat danger"><span class="stat-label">Classified as spam</span><strong id="ov-spam">0</strong></div>
+    <div class="stat good"><span class="stat-label">Classified as safe</span><strong id="ov-safe">0</strong></div>
+    <div class="stat"><span class="stat-label">Pattern categories</span><strong id="ov-cats">–</strong></div>
+    <div class="stat"><span class="stat-label">NFA states</span><strong id="ov-nfa">–</strong></div>
+    <div class="stat"><span class="stat-label">DFA states</span><strong id="ov-dfa">–</strong></div>
+  </div>
+  <div class="grid-2">
+    <div class="panel"><h2>Recent scan activity</h2>
+      <div id="ov-recent" class="empty">No emails scanned yet in this session.</div></div>
+    <div class="panel"><h2>Pattern detection summary</h2><div id="ov-patterns"></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="panel"><h2>NFA (compact)</h2><div class="mini-graph" id="ov-nfa-graph"></div><a class="link" href="#nfa">Open NFA Explorer →</a></div>
+    <div class="panel"><h2>DFA (compact)</h2><div class="mini-graph" id="ov-dfa-graph"></div><a class="link" href="#dfa">Open DFA Explorer →</a></div>
+  </div>
+  <div class="grid-2">
+    <div class="panel"><h2>How NFA and DFA work</h2>
+      <p>An <strong>NFA</strong> can be in several states at once. Our NFA keeps a start state that loops on every character and uses ε-transitions to begin every pattern at any position.</p>
+      <p>Subset construction turns it into a <strong>DFA</strong>: each DFA state is a <em>set</em> of NFA states, and every character causes exactly one transition.</p></div>
+    <div class="panel"><h2>Compare performance</h2>
+      <p>Measure the real Python NFA and DFA simulators on the same emails with <code>time.perf_counter()</code>.</p>
+      <a class="btn" href="#perf">Open Performance Lab</a></div>
+  </div>
+</section>
+
+<!-- ============================ SCANNER ============================ -->
+<section class="page" id="page-scanner" data-title="Email Scanner" hidden>
+  <div class="page-head">
+    <h1>Email Scanner</h1>
+    <button class="btn" id="sc-demo-toggle" aria-pressed="false">Demonstration mode</button>
+  </div>
+  <div class="tabs" role="tablist" id="sc-tabs">
+    <button role="tab" data-tab="input" class="active">Email &amp; results</button>
+    <button role="tab" data-tab="nfa">NFA simulation</button>
+    <button role="tab" data-tab="dfa">DFA simulation</button>
+    <button role="tab" data-tab="compare">Comparison</button>
+    <button role="tab" data-tab="perf">Performance summary</button>
+  </div>
+
+  <div class="tab-panel" id="sc-tab-input">
+    <div class="grid-scan">
+      <div class="panel">
+        <label for="sc-input" class="field-label">Paste an email (headers and body, any text)</label>
+        <textarea id="sc-input" rows="12" spellcheck="false" placeholder="Paste or type any email here, or load an example / upload a file…"></textarea>
+        <div class="row wrap gap">
+          <label class="inline">Threshold
+            <select id="sc-threshold"></select></label>
+          <label class="inline">Example
+            <select id="sc-example"></select></label>
+          <button class="btn small" id="sc-load">Load Example</button>
+          <button class="btn small" id="sc-upload">Upload File</button>
+          <input type="file" id="sc-file" accept=".txt,.eml" hidden>
+          <button class="btn small" id="sc-clear">Clear Input</button>
+          <button class="btn small" id="sc-reset">Reset Results</button>
+        </div>
+        <div class="row wrap gap action-row">
+          <button class="btn primary" id="sc-analyze">Analyze Email</button>
+          <button class="btn" id="sc-run-nfa">Run NFA</button>
+          <button class="btn" id="sc-run-dfa">Run DFA</button>
+          <button class="btn" id="sc-compare">Compare Both</button>
+        </div>
+        <p class="hint">Files: <code>.txt</code> (several emails separated by a line containing <code id="sc-delim"></code>) or <code>.eml</code>. Everything is processed locally.</p>
+        <div id="sc-batch" class="batch" hidden>
+          <div class="row between"><h3>Parsed emails (<span id="sc-batch-count">0</span>)</h3><button class="btn small" id="sc-batch-all">Scan all</button></div>
+          <ul id="sc-batch-list"></ul>
+          <div id="sc-batch-results"></div>
+        </div>
+      </div>
+      <div class="panel result-panel" aria-live="polite">
+        <div id="sc-scanning" class="scanning" hidden><div class="scan-line"></div><span>Scanning with the automata…</span></div>
+        <div id="sc-empty" class="empty">Run an analysis to see the verdict, matched patterns and positions.</div>
+        <div id="sc-results" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="sc-tab-nfa" hidden>
+    <div class="panel"><div class="row between wrap"><p class="hint" id="sc-nfa-note">Click “Show Matching States” or “Step Through Automaton” on the results page to load the current email.</p>
+      <div class="row gap"><button class="btn small" id="sc-show-states">Show Matching States</button><button class="btn small" id="sc-step-nfa">Step Through NFA</button></div></div>
+      <div id="sc-nfa-view"></div></div>
+  </div>
+  <div class="tab-panel" id="sc-tab-dfa" hidden>
+    <div class="panel"><div class="row between wrap"><p class="hint" id="sc-dfa-note">Load a trace to step through the DFA for the current email.</p>
+      <div class="row gap"><button class="btn small" id="sc-step-dfa">Step Through DFA</button></div></div>
+      <div id="sc-dfa-view"></div></div>
+  </div>
+  <div class="tab-panel" id="sc-tab-compare" hidden><div class="panel" id="sc-compare-body"><div class="empty">Use “Compare Both” to run NFA and DFA on the current email.</div></div></div>
+  <div class="tab-panel" id="sc-tab-perf" hidden><div class="panel" id="sc-perf-body"><div class="empty">Use “Compare Both” to see timings for the current email.</div></div></div>
+</section>
+
+<!-- ============================ NFA ============================ -->
+<section class="page" id="page-nfa" data-title="NFA Explorer" hidden>
+  <div class="page-head"><h1>NFA Explorer</h1></div>
+  <div class="panel"><div id="nfa-view"></div></div>
+  <div class="panel"><h2>Formal definition</h2><div id="nfa-definition" class="prose"></div></div>
+</section>
+
+<!-- ============================ DFA ============================ -->
+<section class="page" id="page-dfa" data-title="DFA Explorer" hidden>
+  <div class="page-head"><h1>DFA Explorer</h1></div>
+  <div class="panel"><div id="dfa-view"></div></div>
+  <div class="panel"><h2>Selected state</h2><div id="dfa-details" class="empty">Click a state in the graph, or search for one above.</div></div>
+</section>
+
+<!-- ============================ SUBSET ============================ -->
+<section class="page" id="page-subset" data-title="Subset Construction" hidden>
+  <div class="page-head"><h1>Subset Construction</h1></div>
+  <div class="stat-grid" id="ss-summary"></div>
+  <div class="panel">
+    <div class="player" id="ss-player">
+      <button class="btn small" data-act="reset">Reset</button>
+      <button class="btn small" data-act="prev">Previous</button>
+      <button class="btn small primary" data-act="play">Play</button>
+      <button class="btn small" data-act="pause">Pause</button>
+      <button class="btn small" data-act="next">Next</button>
+      <button class="btn small" id="ss-next-new">Next new state</button>
+      <label class="inline">Speed <select id="ss-speed"><option value="600">Slow</option><option value="250" selected>Normal</option><option value="60">Fast</option><option value="10">Very fast</option></select></label>
+      <span class="hint" id="ss-counter"></span>
+    </div>
+    <div id="ss-current" class="step-card"></div>
+  </div>
+  <div class="grid-2">
+    <div class="panel"><h2>DFA states discovered so far</h2><div id="ss-discovered" class="chips"></div></div>
+    <div class="panel"><h2>Recent calculations</h2><div class="table-wrap"><table class="data" id="ss-log"></table></div></div>
+  </div>
+  <div class="panel"><h2>Algorithm</h2>
+    <ol class="prose">
+      <li>Compute the ε-closure of the NFA start state; it becomes the DFA start state D0.</li>
+      <li>Take each unprocessed DFA state (a subset of NFA states).</li>
+      <li>For every symbolic input class compute <em>move</em>, then its ε-closure.</li>
+      <li>If that subset is already known reuse its DFA state; otherwise create a new one.</li>
+      <li>A DFA state is accepting if its subset contains an accepting NFA state.</li>
+      <li>Repeat until no unprocessed subsets remain.</li></ol></div>
+</section>
+
+<!-- ============================ TABLE ============================ -->
+<section class="page" id="page-table" data-title="DFA Transition Table" hidden>
+  <div class="page-head"><h1>DFA Transition Table</h1></div>
+  <div class="panel">
+    <div class="row wrap gap">
+      <input type="search" id="tt-search" placeholder="Search state (e.g. D12) or NFA state (e.g. q5)" aria-label="Search states">
+      <label class="inline"><input type="checkbox" id="tt-accepting"> Accepting only</label>
+      <label class="inline"><input type="checkbox" id="tt-subset" checked> Show NFA subsets</label>
+      <button class="btn small" id="tt-copy">Copy table</button>
+      <a class="btn small" href="/api/dfa/table.csv" download>Export CSV</a>
+      <a class="btn small" href="/api/dfa/table.json" download>Export JSON</a>
+      <span class="hint" id="tt-count"></span>
+    </div>
+    <p class="hint">OTHER is a symbolic class: every character that is not used by any pattern literal.</p>
+    <div class="table-wrap tall"><table class="data sticky" id="tt-table"></table></div>
+  </div>
+</section>
+
+<!-- ============================ PERF ============================ -->
+<section class="page" id="page-perf" data-title="Performance Lab" hidden>
+  <div class="page-head"><h1>Performance Lab</h1></div>
+  <div class="panel">
+    <div class="row wrap gap">
+      <label class="inline">Repetitions <input type="number" id="pf-reps" min="1" max="200" value="30"></label>
+      <label class="inline">Warm-up runs <input type="number" id="pf-warm" min="0" max="50" value="3"></label>
+      <label class="inline"><input type="checkbox" id="pf-scaling" checked> Include input-size test</label>
+      <button class="btn primary" id="pf-run">Run Benchmark</button>
+    </div>
+    <p class="hint">Benchmarks the 20-email dataset with the real NFA and DFA simulators. Results vary by computer.</p>
+  </div>
+  <div id="pf-output"><div class="panel empty">Run the benchmark to see measured results.</div></div>
+</section>
+
+<!-- ============================ DATASET ============================ -->
+<section class="page" id="page-dataset" data-title="Dataset" hidden>
+  <div class="page-head"><h1>Dataset</h1></div>
+  <div class="grid-scan">
+    <div class="panel">
+      <div class="row wrap gap">
+        <label class="inline">Filter <select id="ds-filter"><option value="">All</option><option>SPAM DETECTED</option><option>SAFE</option></select></label>
+        <button class="btn small primary" id="ds-scan-all">Scan full dataset</button>
+        <a class="btn small" href="/api/dataset/export.csv" download>Export results CSV</a>
+      </div>
+      <ul class="list" id="ds-list"></ul>
+    </div>
+    <div class="panel" id="ds-preview"><div class="empty">Select an email to preview it.</div></div>
+  </div>
+  <div class="panel" id="ds-results" hidden></div>
+</section>
+
+<!-- ============================ ABOUT ============================ -->
+<section class="page" id="page-about" data-title="About Project" hidden>
+  <div class="page-head"><h1>About Project</h1></div>
+  <div class="panel prose">
+    <h2>Spam / Phishing Email Detector Using NFA and DFA</h2>
+    <p>PHANTOM SHIELD is a Theory of Computation project. A character-level ε-NFA recognises five keyword categories; subset construction produces the equivalent DFA; both simulators report the same occurrences.</p>
+    <h3>Pattern categories</h3><ul id="about-patterns"></ul>
+    <h3>Scoring rule (application-specific)</h3>
+    <p>The spam score is the number of <em>distinct</em> categories matched (out of five). The verdict is <strong>SPAM DETECTED</strong> when the score reaches the threshold (default 2), otherwise <strong>SAFE</strong>. This rule is not part of automata theory.</p>
+    <h3>Limitations</h3>
+    <ul><li>Literal substring matching: <code>window</code> contains <code>win</code>, so it matches.</li>
+      <li>Keyword-only: misspellings, images and unusual wording are not detected.</li>
+      <li>SAFE does not prove that an email is legitimate. This is an educational tool, not enterprise email security.</li></ul>
+    <h3>Privacy</h3>
+    <p>Email text is processed locally, never sent to external services, never written to disk, and only counts (not text) are kept in session statistics.</p>
+  </div>
+</section>
+{% endblock %}
