@@ -16,10 +16,11 @@ PATTERNS = [
     ("CLICK_HERE", "click here"),
     ("URGENT", "urgent"),
     ("VERIFY_ACCOUNT", "verify your account"),
-    ("LOTTERY", "lottery"),
+    ("OFFER","offer")
+    
 ]
 
-CATEGORIES = ["FREE", "WIN_WON", "CLICK_HERE", "URGENT", "VERIFY_ACCOUNT","LOTTERY"]
+CATEGORIES = ["FREE", "WIN_WON", "CLICK_HERE", "URGENT", "VERIFY_ACCOUNT","OFFER"]
 
 OTHER = "OTHER"  # symbolic class: every character not used by any literal
 
