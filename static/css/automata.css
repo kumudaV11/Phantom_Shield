@@ -1,0 +1,33 @@
+/* Automata graphs, players and step cards */
+.graph-box { position: relative; height: 460px; border: 1px solid var(--border); border-radius: 10px; background: rgba(3,8,20,.65); overflow: hidden; }
+.graph-box svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; } .graph-box svg.dragging { cursor: grabbing; }
+.graph-tools { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 3; }
+.graph-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .78rem; color: var(--muted); margin: 8px 0; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.node circle.body { fill: #0c1a36; stroke: var(--ice); stroke-width: 1.6; transition: fill .2s, stroke .2s; }
+.node circle.ring { fill: none; stroke: var(--ice); stroke-width: 1.4; }
+.node text { fill: var(--text); font-size: 11px; text-anchor: middle; dominant-baseline: central; pointer-events: none; font-family: var(--mono); }
+.node.accepting circle.body { stroke: var(--green); } .node.accepting circle.ring { stroke: var(--green); }
+.node.selected circle.body { stroke: var(--amber); stroke-width: 3; }
+.node.active circle.body { fill: rgba(34,211,238,.55); stroke: var(--cyan); stroke-width: 3; filter: drop-shadow(0 0 6px var(--cyan)); }
+.node.hit circle.body { fill: rgba(255,93,115,.55); stroke: var(--red); }
+.node { cursor: pointer; }
+.edge path { fill: none; stroke: rgba(154,215,255,.45); stroke-width: 1.2; transition: stroke .2s; }
+.edge.epsilon path { stroke-dasharray: 5 4; stroke: rgba(139,92,246,.8); }
+.edge text { fill: var(--muted); font-size: 10px; text-anchor: middle; font-family: var(--mono); paint-order: stroke; stroke: #050914; stroke-width: 3px; pointer-events: none; }
+.edge.traversed path { stroke: var(--cyan); stroke-width: 2.6; filter: drop-shadow(0 0 4px var(--cyan)); } .edge.traversed text { fill: var(--cyan); }
+.edge.hidden { display: none; }
+.arrow-head { fill: rgba(154,215,255,.7); }
+.player { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+.step-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: rgba(3,8,20,.55); font-size: .9rem; min-height: 90px; }
+.step-card dl { display: grid; grid-template-columns: 170px 1fr; gap: 4px 12px; margin: 0; } .step-card dt { color: var(--muted); } .step-card dd { margin: 0; font-family: var(--mono); word-break: break-word; }
+.trace-input { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; } .trace-input input { flex: 1; min-width: 220px; font-family: var(--mono); }
+.symbol-strip { display: flex; flex-wrap: wrap; gap: 2px; margin: 8px 0; font-family: var(--mono); }
+.symbol-strip span { min-width: 18px; text-align: center; padding: 2px 3px; border-radius: 4px; border: 1px solid transparent; background: rgba(255,255,255,.05); white-space: pre; }
+.symbol-strip span.done { background: rgba(139,92,246,.25); } .symbol-strip span.current { background: var(--cyan); color: #000; }
+.log-wrap { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; margin-top: 10px; }
+.log-wrap tr.current td { background: rgba(34,211,238,.14); }
+.def-grid { display: grid; gap: 6px; } .def-grid code { white-space: normal; }
+@media (max-width: 700px) { .step-card dl { grid-template-columns: 1fr; } .compare-grid { grid-template-columns: 1fr; } }
+
+.edge.hidden.traversed { display: inline; }
